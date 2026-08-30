@@ -1,0 +1,100 @@
+name: Build krsplit p213 firmware
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-default:
+    name: Build default (mainline QMK, no Vial)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Checkout QMK firmware
+        uses: actions/checkout@v4
+        with:
+          repository: qmk/qmk_firmware
+          submodules: recursive
+          fetch-depth: 1
+          path: qmk_firmware
+
+      - name: Copy keyboard files into QMK tree
+        run: |
+          mkdir -p qmk_firmware/keyboards/krsplit/p213/keymaps/default/features
+          cp config.h keyboard.json p213.c krsplit.h rules.mk qmk_firmware/keyboards/krsplit/p213/
+          cp keymaps/default/config.h keymaps/default/halconf.h keymaps/default/mcuconf.h keymaps/default/keymap.c qmk_firmware/keyboards/krsplit/p213/keymaps/default/
+          cp keymaps/default/features/*.c keymaps/default/features/*.h qmk_firmware/keyboards/krsplit/p213/keymaps/default/features/
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install ARM toolchain + QMK CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi
+          pip install -r qmk_firmware/requirements.txt
+          pip install qmk
+
+      - name: Build firmware
+        working-directory: qmk_firmware
+        run: |
+          qmk config user.qmk_home="$(pwd)"
+          make krsplit/p213:default
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: krsplit_p213_default
+          path: qmk_firmware/*.uf2
+          if-no-files-found: error
+
+  build-vial:
+    name: Build vial (vial-qmk fork, Vial GUI 지원)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Checkout Vial QMK
+        uses: actions/checkout@v4
+        with:
+          repository: vial-kb/vial-qmk
+          submodules: recursive
+          fetch-depth: 1
+          path: vial-qmk
+
+      - name: Copy keyboard files into Vial QMK tree
+        run: |
+          mkdir -p vial-qmk/keyboards/krsplit/p213/keymaps/vial/features
+          cp config.h keyboard.json p213.c krsplit.h rules.mk vial-qmk/keyboards/krsplit/p213/
+          cp keymaps/vial/config.h keymaps/vial/rules.mk keymaps/vial/vial.json keymaps/vial/keymap.c keymaps/vial/halconf.h keymaps/vial/mcuconf.h vial-qmk/keyboards/krsplit/p213/keymaps/vial/
+          cp keymaps/vial/features/*.c keymaps/vial/features/*.h vial-qmk/keyboards/krsplit/p213/keymaps/vial/features/
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install ARM toolchain + QMK CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi
+          pip install -r vial-qmk/requirements.txt
+          pip install qmk
+
+      - name: Build firmware
+        working-directory: vial-qmk
+        run: |
+          qmk config user.qmk_home="$(pwd)"
+          make krsplit/p213:vial
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: krsplit_p213_vial
+          path: vial-qmk/*.uf2
+          if-no-files-found: error
