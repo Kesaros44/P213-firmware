@@ -1,7 +1,7 @@
 {
-    "keyboard_name": "MINHYEONG-BOARD",
-    "maintainer": "MinHyeong-Lee",
-    "manufacturer": "MINHYEONG",
+    "keyboard_name": "krsplit P213",
+    "maintainer": "kesaros44",
+    "manufacturer": "krsplit",
     "usb": {
         "vid": "0xFEED",
         "pid": "0x0000",
