@@ -72,6 +72,13 @@
 #define BACKLIGHT_PWM_DRIVER_RIGHT PWMD6
 #define BACKLIGHT_PWM_CHANNEL_RIGHT RP2040_PWM_CHANNEL_A
 
+/* 유선 키보드라 USB suspend 시 절전 기능이 필요 없음.
+ * 이게 없으면 호스트가 USB를 suspend 시킬 때마다 backlight_level_noeeprom(0)으로
+ * 백라이트가 꺼졌다가, wake 될 때 backlight_init()으로 즉시(페이드 없이) 원래
+ * 밝기로 복원되면서 반짝임 현상이 발생함 (호스트의 USB 절전/selective suspend
+ * 타이밍에 따라 몇 분 간격으로 재발 가능). */
+#define NO_SUSPEND_POWER_DOWN
+
 /* ──────────────────────────────
  * SPLIT COMMUNICATION SETTINGS
  * ──────────────────────────────
