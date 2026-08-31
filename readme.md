@@ -2,6 +2,8 @@
 
 An RP2040-based split custom keyboard from the krsplit series, connected over wired USB-C. It's a column/row-staggered split board designed around an ANSI 107-key layout, with a rotary encoder and an analog joystick (pointing device) on the right half, letting you move the cursor and scroll without a separate mouse.
 
+![krsplit P213](images/p213-assembled.png)
+
 * Keyboard Maintainer: [kesaros44](https://github.com/kesaros44)
 * Hardware Supported: RP2040 (Raspberry Pi RP2040), one PCB per half (left/right)
 * Hardware Availability: personal custom PCB (not publicly distributed)
@@ -56,6 +58,8 @@ Enter the bootloader in 3 ways:
 # krsplit P213 (한글)
 
 krsplit 시리즈의 RP2040 기반 스플릿 커스텀 키보드로, 유선 USB-C로 연결합니다. ANSI 107키 레이아웃을 기준으로 설계된 컬럼/로우 스태거드 스플릿 보드이며, 우측 절반에 로터리 엔코더와 아날로그 조이스틱(포인팅 디바이스)이 있어 별도의 마우스 없이 커서 이동과 스크롤이 가능합니다.
+
+![krsplit P213](images/p213-assembled.png)
 
 * 키보드 유지보수자: [kesaros44](https://github.com/kesaros44)
 * 지원 하드웨어: RP2040 (Raspberry Pi RP2040), 좌/우 절반당 각각 1개의 PCB
