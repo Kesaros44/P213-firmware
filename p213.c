@@ -37,7 +37,7 @@ void pointing_device_init_kb(void) {
 
 #if defined(POINTING_DEVICE_ENABLE) || defined(KRSPLIT_ENCODER_MODE_MAP_ENABLE)
 typedef union {
-    uint16_t raw;
+    uint32_t raw; // 구조체가 4바이트라 16비트로는 enc_modes[1]이 저장되지 않음
     struct {
         uint8_t pointer_default_dpi : 4; // 16 steps available.
         uint8_t pointer_sniping_dpi : 2; // 4 steps available.
@@ -58,7 +58,7 @@ static krsplit_config_t g_krsplit_config = {0};
  * explicitly set them to `false` in this function.
  */
 static void read_krsplit_config_from_eeprom(krsplit_config_t* config) {
-    config->raw                   = eeconfig_read_kb() & 0xffff;
+    config->raw                   = eeconfig_read_kb();
     config->is_dragscroll_enabled = false;
     config->is_sniping_enabled    = false;
 }
@@ -168,7 +168,8 @@ typedef struct {
 } krsplit_found_enc_mode_t;
 
 static krsplit_found_enc_mode_t krsplit_get_found_encoder_mode(krsplit_config_t* config, uint8_t index) {
-    krsplit_found_enc_mode_t found_enc_mode;
+    // 일치하는 모드가 없으면 첫 번째 모드로 (초기화 안 된 포인터 방지)
+    krsplit_found_enc_mode_t found_enc_mode = {0, &krsplit_encoder_mode_map[index][0]};
 
     for (size_t i = 0; i < KRSPLIT_ENCODER_MODE_COUNT; i++) {
         krsplit_enc_mode_t* cur_enc_mode = &krsplit_encoder_mode_map[index][i];

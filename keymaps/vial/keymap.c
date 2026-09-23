@@ -31,7 +31,6 @@ enum layer_names {
 #define DELTA_Y_THRESHOLD 15
 
 bool scroll_enabled = false;
-bool lock_state     = false;
 
 // State
 static int8_t delta_x = 0;
@@ -95,8 +94,8 @@ void update_caps_led(void) {
 }
 
 // LED 0번: 레이어 표시
-void update_layer_led(void) {
-    switch (get_highest_layer(layer_state)) {
+void update_layer_led(layer_state_t state) {
+    switch (get_highest_layer(state)) {
         case _WBASE:
             rgblight_sethsv_at(HSV_RED, 0);    // 윈도우 → 빨간색
             break;
@@ -122,16 +121,16 @@ bool led_update_user(led_t led_state) {
     return true;
 }
 
-// 레이어 변경 시
+// 레이어 변경 시 (전역 layer_state는 이 함수가 끝난 뒤에 갱신되므로 state를 넘김)
 layer_state_t layer_state_set_user(layer_state_t state) {
-    update_layer_led();
+    update_layer_led(state);
     return state;
 }
 
 void keyboard_post_init_user(void) {
     rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT); // 고정 모드
     update_caps_led();
-    update_layer_led();
+    update_layer_led(layer_state);
     rgblight_sethsv_at(HSV_OFF, 2);  // LED 2번 끄기
     rgblight_sethsv_at(HSV_OFF, 3);  // LED 3번 끄기
 }
@@ -141,7 +140,7 @@ void housekeeping_task_user(void) {
         static layer_state_t last_state = 255;
         if (last_state != layer_state) {
             last_state = layer_state;
-            update_layer_led();
+            update_layer_led(layer_state);
         }
     }
 }
